@@ -19,3 +19,4 @@ ue:
   server-url: /ueditor
   url-prefix: /files
  ```
+copy ueditor1_4_3_3-utf8-jsp to resources/static
