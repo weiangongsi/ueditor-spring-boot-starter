@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +48,7 @@ public class UeditorAutoConfigure extends WebMvcConfigurerAdapter {
                         response.setContentType("image/jpeg");
                         String filename = request.getRequestURI().substring(properties.getUrlPrefix().length(), request.getRequestURI().length());
                         BufferedImage buffImg = ImageIO.read(new File(filename));
-                        ImageIO.write(buffImg, "jpeg", out);
+                        ImageIO.write(buffImg, "png", out);
                     } else {
                         out.print(200);
                     }
