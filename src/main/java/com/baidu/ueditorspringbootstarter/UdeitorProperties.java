@@ -15,11 +15,6 @@ public class UdeitorProperties {
     private String rootPath;
 
     /**
-     * 文件保存路径
-     */
-    private String dir;
-
-    /**
      * ueditor服务器统一请求接口路径
      */
     private String serverUrl;
@@ -35,14 +30,6 @@ public class UdeitorProperties {
 
     public void setRootPath(String rootPath) {
         this.rootPath = rootPath;
-    }
-
-    public String getDir() {
-        return dir;
-    }
-
-    public void setDir(String dir) {
-        this.dir = dir;
     }
 
     public String getServerUrl() {
