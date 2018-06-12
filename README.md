@@ -14,7 +14,6 @@ pom.xml add
 application.yml
 ```
 ue:
-  dir: /upload
   root-path: src/main/resources/static/ueditor/jsp
   server-url: /ueditor
   url-prefix: /files
