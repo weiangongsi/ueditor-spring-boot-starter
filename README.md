@@ -1,6 +1,6 @@
 # ueditor-spring-boot-starter
 ueditor-spring-boot-starter
-maven package or install
+maven package or install<br>
 in your project
 
 pom.xml add
