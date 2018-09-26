@@ -9,15 +9,12 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author lihy
@@ -37,24 +34,28 @@ public class UeditorAutoConfigure extends WebMvcConfigurerAdapter {
             @Override
             public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
                 ServletOutputStream out = null;
+                InputStream in = null;
                 try {
                     out = response.getOutputStream();
                     if (request.getRequestURI().equals(properties.getServerUrl())) {
                         out.print(new ActionEnter(request, properties.getRootPath()).exec());
                     } else if (request.getRequestURI().contains(properties.getUrlPrefix())) {
-                        response.setHeader("Pragma", "no-cache");
-                        response.setHeader("Cache-Control", "no-cache");
-                        response.setDateHeader("Expires", 0);
-                        response.setContentType("image/jpeg");
                         String filename = request.getRequestURI().substring(properties.getUrlPrefix().length(), request.getRequestURI().length());
-                        BufferedImage buffImg = ImageIO.read(new File(filename));
-                        ImageIO.write(buffImg, "png", out);
+                        in = new FileInputStream(filename);
+                        int len = 0;
+                        byte[] buffer = new byte[1024];
+                        while ((len = in.read(buffer)) > 0) {
+                            out.write(buffer, 0, len);
+                        }
                     } else {
                         out.print(200);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
+                    if (in != null) {
+                        in.close();
+                    }
                     if (out != null) {
                         out.close();
                     }
