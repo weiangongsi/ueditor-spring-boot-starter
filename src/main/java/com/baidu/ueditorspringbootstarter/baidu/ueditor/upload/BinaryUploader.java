@@ -6,8 +6,8 @@ import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.AppInfo;
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.BaseState;
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.FileType;
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.State;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
