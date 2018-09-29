@@ -1,5 +1,6 @@
 package com.baidu.ueditorspringbootstarter.baidu.ueditor.hunter;
 
+import com.baidu.ueditorspringbootstarter.UeditorAutoConfigure;
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.PathFormat;
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.AppInfo;
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.BaseState;
@@ -58,7 +59,7 @@ public class FileManager {
             }
             file = (File) obj;
             fileState = new BaseState(true);
-            fileState.putInfo("url", file.getPath().replace("\\", "/"));
+            fileState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + file.getPath().replace("\\", "/"));
             state.addState(fileState);
         }
         return state;

@@ -1,5 +1,6 @@
 package com.baidu.ueditorspringbootstarter.baidu.ueditor.upload;
 
+import com.baidu.ueditorspringbootstarter.UeditorAutoConfigure;
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.PathFormat;
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.AppInfo;
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.BaseState;
@@ -62,7 +63,7 @@ public class BinaryUploader {
             String physicalPath = savePath;
             State storageState = StorageManager.saveFileByInputStream(file.getInputStream(), physicalPath);
             if (storageState.isSuccess()) {
-                storageState.putInfo("url", PathFormat.format(savePath));
+                storageState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix()+PathFormat.format(savePath));
                 storageState.putInfo("type", suffix);
                 storageState.putInfo("original", originFileName + suffix);
             }

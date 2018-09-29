@@ -1,6 +1,5 @@
 package com.baidu.ueditorspringbootstarter.baidu.ueditor;
 
-
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.ActionMap;
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.AppInfo;
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.BaseState;
@@ -16,57 +15,41 @@ public class ActionEnter {
 
     private HttpServletRequest request = null;
 
-    private String rootPath = null;
-    private String contextPath = null;
+    private String configFile = null;
 
     private String actionType = null;
 
     private ConfigManager configManager = null;
 
-    public ActionEnter(HttpServletRequest request, String rootPath) {
-
+    public ActionEnter(HttpServletRequest request, String configFile) {
         this.request = request;
-        this.rootPath = rootPath;
+        this.configFile = configFile;
         this.actionType = request.getParameter("action");
-        this.contextPath = request.getContextPath();
-        this.configManager = ConfigManager.getInstance(this.rootPath, this.contextPath, request.getRequestURI());
-
+        this.configManager = ConfigManager.getInstance(configFile);
     }
 
     public String exec() {
-
         String callbackName = this.request.getParameter("callback");
-
         if (callbackName != null) {
-
             if (!validCallbackName(callbackName)) {
                 return new BaseState(false, AppInfo.ILLEGAL).toJSONString();
             }
-
             return callbackName + "(" + this.invoke() + ");";
-
         } else {
             return this.invoke();
         }
-
     }
 
     public String invoke() {
-
         if (actionType == null || !ActionMap.mapping.containsKey(actionType)) {
             return new BaseState(false, AppInfo.INVALID_ACTION).toJSONString();
         }
-
         if (this.configManager == null || !this.configManager.valid()) {
             return new BaseState(false, AppInfo.CONFIG_ERROR).toJSONString();
         }
-
         State state = null;
-
         int actionCode = ActionMap.getType(this.actionType);
-
         Map<String, Object> conf = null;
-
         switch (actionCode) {
 
             case ActionMap.CONFIG:
@@ -92,36 +75,25 @@ public class ActionEnter {
                 int start = this.getStartIndex();
                 state = new FileManager(conf).listFile(start);
                 break;
-
         }
-
         return state.toJSONString();
-
     }
 
     public int getStartIndex() {
-
         String start = this.request.getParameter("start");
-
         try {
             return Integer.parseInt(start);
         } catch (Exception e) {
             return 0;
         }
-
     }
 
-    /**
-     * callback参数验证
-     */
-    public boolean validCallbackName(String name) {
 
+    public boolean validCallbackName(String name) {
         if (name.matches("^[a-zA-Z_]+[\\w0-9_]*$")) {
             return true;
         }
-
         return false;
-
     }
 
 }

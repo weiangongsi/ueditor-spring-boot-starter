@@ -12,7 +12,7 @@ public class UdeitorProperties {
     /**
      * config.json 路径
      */
-    private String rootPath;
+    private String configFile;
 
     /**
      * ueditor服务器统一请求接口路径
@@ -24,12 +24,12 @@ public class UdeitorProperties {
      */
     private String urlPrefix;
 
-    public String getRootPath() {
-        return rootPath;
+    public String getConfigFile() {
+        return configFile;
     }
 
-    public void setRootPath(String rootPath) {
-        this.rootPath = rootPath;
+    public void setConfigFile(String configFile) {
+        this.configFile = configFile;
     }
 
     public String getServerUrl() {

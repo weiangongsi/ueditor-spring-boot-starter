@@ -26,10 +26,13 @@ import java.io.InputStream;
 public class UeditorAutoConfigure extends WebMvcConfigurerAdapter {
 
     @Autowired
-    UdeitorProperties properties;
+    UdeitorProperties autoProperties;
+
+    public static UdeitorProperties properties;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        properties = autoProperties;
         registry.addInterceptor(new HandlerInterceptorAdapter() {
             @Override
             public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -37,10 +40,10 @@ public class UeditorAutoConfigure extends WebMvcConfigurerAdapter {
                 InputStream in = null;
                 try {
                     out = response.getOutputStream();
-                    if (request.getRequestURI().equals(properties.getServerUrl())) {
-                        out.print(new ActionEnter(request, properties.getRootPath()).exec());
-                    } else if (request.getRequestURI().contains(properties.getUrlPrefix())) {
-                        String filename = request.getRequestURI().substring(properties.getUrlPrefix().length(), request.getRequestURI().length());
+                    if (request.getRequestURI().equals(autoProperties.getServerUrl())) {
+                        out.print(new ActionEnter(request, autoProperties.getConfigFile()).exec());
+                    } else if (request.getRequestURI().contains(autoProperties.getUrlPrefix())) {
+                        String filename = request.getRequestURI().substring(autoProperties.getUrlPrefix().length(), request.getRequestURI().length());
                         in = new FileInputStream(filename);
                         int len = 0;
                         byte[] buffer = new byte[1024];
@@ -63,6 +66,6 @@ public class UeditorAutoConfigure extends WebMvcConfigurerAdapter {
                 // false直接返回response
                 return false;
             }
-        }).addPathPatterns(properties.getServerUrl(), properties.getUrlPrefix() + "/**");
+        }).addPathPatterns(autoProperties.getServerUrl(), autoProperties.getUrlPrefix() + "/**");
     }
 }
