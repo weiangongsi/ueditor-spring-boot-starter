@@ -29,7 +29,7 @@ public class UdeitorProperties {
     /**
      * 存储文件的绝对路径 必须使用标准路径"/"作为分隔符
      */
-    private String physicalPath;
+    private String physicalPath = "/";
 
     public String getConfigFile() {
         return configFile;
