@@ -13,30 +13,21 @@ import java.util.Map;
 public final class Base64Uploader {
 
     public static State save(String content, Map<String, Object> conf) {
-
         byte[] data = decode(content);
-
         long maxSize = ((Long) conf.get("maxSize")).longValue();
-
         if (!validSize(data, maxSize)) {
             return new BaseState(false, AppInfo.MAX_SIZE);
         }
-
         String suffix = FileType.getSuffix("JPG");
-
-        String savePath = PathFormat.parse((String) conf.get("savePath"),
-                (String) conf.get("filename"));
-
+        String savePath = PathFormat.parse((String) conf.get("savePath"), (String) conf.get("filename"));
         savePath = savePath + suffix;
-
-        State storageState = StorageManager.saveBinaryFile(data, savePath);
-
+        String physicalPath = (UeditorAutoConfigure.properties.getPhysicalPath() + savePath).replace("//", "/");
+        State storageState = StorageManager.saveBinaryFile(data, physicalPath);
         if (storageState.isSuccess()) {
-            storageState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix()+PathFormat.format(savePath));
+            storageState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + PathFormat.format(savePath));
             storageState.putInfo("type", suffix);
             storageState.putInfo("original", "");
         }
-
         return storageState;
     }
 

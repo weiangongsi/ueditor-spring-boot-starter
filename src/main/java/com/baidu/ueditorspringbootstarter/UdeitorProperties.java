@@ -3,6 +3,8 @@ package com.baidu.ueditorspringbootstarter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * 百度编辑器配置
+ *
  * @author lihy
  * @version 2018/6/12
  */
@@ -23,6 +25,11 @@ public class UdeitorProperties {
      * 资源访问前缀
      */
     private String urlPrefix;
+
+    /**
+     * 存储文件的绝对路径 必须使用标准路径"/"作为分隔符
+     */
+    private String physicalPath;
 
     public String getConfigFile() {
         return configFile;
@@ -46,5 +53,13 @@ public class UdeitorProperties {
 
     public void setUrlPrefix(String urlPrefix) {
         this.urlPrefix = urlPrefix;
+    }
+
+    public String getPhysicalPath() {
+        return physicalPath;
+    }
+
+    public void setPhysicalPath(String physicalPath) {
+        this.physicalPath = physicalPath;
     }
 }

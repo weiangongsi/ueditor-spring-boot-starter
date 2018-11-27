@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * 拦截器
+ *
  * @author lihy
  * @version 2018/6/12
  */
@@ -44,7 +46,7 @@ public class UeditorAutoConfigure extends WebMvcConfigurerAdapter {
                         out.print(new ActionEnter(request, autoProperties.getConfigFile()).exec());
                     } else if (request.getRequestURI().contains(autoProperties.getUrlPrefix())) {
                         String filename = request.getRequestURI().substring(autoProperties.getUrlPrefix().length(), request.getRequestURI().length());
-                        in = new FileInputStream(filename);
+                        in = new FileInputStream((properties.getPhysicalPath() + filename).replace("//", "/"));
                         int len = 0;
                         byte[] buffer = new byte[1024];
                         while ((len = in.read(buffer)) > 0) {

@@ -21,9 +21,8 @@ public class FileManager {
     private int count = 0;
 
     public FileManager(Map<String, Object> conf) {
-        this.rootPath = (String) conf.get("rootPath");
-//        this.dir = this.rootPath + (String) conf.get("dir");
-        this.dir = (String) conf.get("dir");
+        this.rootPath = UeditorAutoConfigure.properties.getPhysicalPath().replace("\\", "/");
+        this.dir = (this.rootPath + (String) conf.get("dir")).replace("\\", "/").replace("//", "/");
         this.allowFiles = this.getAllowFiles(conf.get("allowFiles"));
         this.count = (Integer) conf.get("count");
     }
@@ -58,8 +57,13 @@ public class FileManager {
                 break;
             }
             file = (File) obj;
+            String absolutePath = file.getAbsolutePath().replace("\\", "/").replace("//", "/");
             fileState = new BaseState(true);
-            fileState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + file.getPath().replace("\\", "/"));
+            if (this.rootPath.equals("/")) {
+                fileState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + file.getPath().replace("\\", "/"));
+            } else {
+                fileState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + "/" + absolutePath.replace(this.rootPath, ""));
+            }
             state.addState(fileState);
         }
         return state;

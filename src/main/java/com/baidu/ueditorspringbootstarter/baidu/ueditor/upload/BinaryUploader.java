@@ -23,18 +23,13 @@ public class BinaryUploader {
     public static final State save(HttpServletRequest request,
                                    Map<String, Object> conf) {
         boolean isAjaxUpload = request.getHeader("X_Requested_With") != null;
-
         if (!ServletFileUpload.isMultipartContent(request)) {
             return new BaseState(false, AppInfo.NOT_MULTIPART_CONTENT);
         }
-
-        ServletFileUpload upload = new ServletFileUpload(
-                new DiskFileItemFactory());
-
+        ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
         if (isAjaxUpload) {
             upload.setHeaderEncoding("UTF-8");
         }
-
         try {
             MultipartHttpServletRequest mRequest = (MultipartHttpServletRequest) request;
             Collection<MultipartFile> files = mRequest.getFileMap().values();
@@ -60,10 +55,10 @@ public class BinaryUploader {
             String savePath = (String) conf.get("savePath");
             savePath = savePath + suffix;
             savePath = PathFormat.parse(savePath, originFileName);
-            String physicalPath = savePath;
+            String physicalPath = (UeditorAutoConfigure.properties.getPhysicalPath() + savePath).replace("//", "/");
             State storageState = StorageManager.saveFileByInputStream(file.getInputStream(), physicalPath);
             if (storageState.isSuccess()) {
-                storageState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix()+PathFormat.format(savePath));
+                storageState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + PathFormat.format(savePath));
                 storageState.putInfo("type", suffix);
                 storageState.putInfo("original", originFileName + suffix);
             }
