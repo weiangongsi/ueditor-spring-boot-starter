@@ -60,12 +60,11 @@ public class FileManager {
                 break;
             }
             file = (File) obj;
-            String absolutePath = PathFormat.format(file.getAbsolutePath());
             fileState = new BaseState(true);
             if (this.rootPath.startsWith("/")) {
-                fileState.putInfo("url", PathFormat.format(contextPath + "/" + UeditorAutoConfigure.properties.getUrlPrefix() + "/" + file.getPath()).replaceFirst(this.rootPath, ""));
+                fileState.putInfo("url", PathFormat.format(contextPath + "/" + UeditorAutoConfigure.properties.getUrlPrefix() + "/" + PathFormat.format(file.getPath()).replaceFirst(this.rootPath, "")));
             } else {
-                fileState.putInfo("url", PathFormat.format(contextPath + "/" + UeditorAutoConfigure.properties.getUrlPrefix() + "/" + absolutePath).replaceFirst(this.rootPath, ""));
+                fileState.putInfo("url", PathFormat.format(contextPath + "/" + UeditorAutoConfigure.properties.getUrlPrefix() + "/" + PathFormat.format(file.getAbsolutePath()).replaceFirst(this.rootPath, "")));
             }
             state.addState(fileState);
         }
