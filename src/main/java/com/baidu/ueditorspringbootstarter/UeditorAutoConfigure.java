@@ -3,11 +3,8 @@ package com.baidu.ueditorspringbootstarter;
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.ActionEnter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -17,57 +14,72 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * 拦截器
+ * 百度编辑器请求
  *
  * @author lihy
- * @version 2018/6/12
+ * @version 2018/11/28
  */
-@Configuration
-@Controller
+@RestController
 @EnableConfigurationProperties(UdeitorProperties.class)
-public class UeditorAutoConfigure extends WebMvcConfigurerAdapter {
-
-    @Autowired
-    UdeitorProperties autoProperties;
+public class UeditorAutoConfigure {
 
     public static UdeitorProperties properties;
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        properties = autoProperties;
-        registry.addInterceptor(new HandlerInterceptorAdapter() {
-            @Override
-            public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-                ServletOutputStream out = null;
-                InputStream in = null;
+    @Autowired
+    public UeditorAutoConfigure(UdeitorProperties properties) {
+        UeditorAutoConfigure.properties = properties;
+    }
+
+
+    /**
+     * 百度编辑器请求
+     *
+     * @param request 请求
+     * @return 处理结果
+     * @author lihy
+     */
+    @RequestMapping({"${ue.server-url}"})
+    public String server(HttpServletRequest request) {
+        return new ActionEnter(request, properties.getConfigFile()).exec();
+    }
+
+    /**
+     * 获取文件请求
+     *
+     * @param request  HttpServletRequest
+     * @param response HttpServletResponse
+     * @author lihy
+     */
+    @RequestMapping({"${ue.url-prefix}**"})
+    public void readFile(HttpServletRequest request, HttpServletResponse response) {
+        ServletOutputStream out = null;
+        InputStream in = null;
+        try {
+            out = response.getOutputStream();
+            String filename = request.getRequestURI().substring(properties.getUrlPrefix().length(), request.getRequestURI().length());
+            in = new FileInputStream((properties.getPhysicalPath() + filename).replace("//", "/"));
+            int len = 0;
+            byte[] buffer = new byte[1024];
+            while ((len = in.read(buffer)) > 0) {
+                out.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (in != null) {
                 try {
-                    out = response.getOutputStream();
-                    if (request.getRequestURI().equals(autoProperties.getServerUrl())) {
-                        out.print(new ActionEnter(request, autoProperties.getConfigFile()).exec());
-                    } else if (request.getRequestURI().contains(autoProperties.getUrlPrefix())) {
-                        String filename = request.getRequestURI().substring(autoProperties.getUrlPrefix().length(), request.getRequestURI().length());
-                        in = new FileInputStream((properties.getPhysicalPath() + filename).replace("//", "/"));
-                        int len = 0;
-                        byte[] buffer = new byte[1024];
-                        while ((len = in.read(buffer)) > 0) {
-                            out.write(buffer, 0, len);
-                        }
-                    } else {
-                        out.print(200);
-                    }
+                    in.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                } finally {
-                    if (in != null) {
-                        in.close();
-                    }
-                    if (out != null) {
-                        out.close();
-                    }
                 }
-                // false直接返回response
-                return false;
             }
-        }).addPathPatterns(autoProperties.getServerUrl(), autoProperties.getUrlPrefix() + "/**");
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
