@@ -15,15 +15,12 @@ public class ActionEnter {
 
     private HttpServletRequest request = null;
 
-    private String configFile = null;
-
     private String actionType = null;
 
     private ConfigManager configManager = null;
 
     public ActionEnter(HttpServletRequest request, String configFile) {
         this.request = request;
-        this.configFile = configFile;
         this.actionType = request.getParameter("action");
         this.configManager = ConfigManager.getInstance(configFile);
     }
@@ -51,10 +48,8 @@ public class ActionEnter {
         int actionCode = ActionMap.getType(this.actionType);
         Map<String, Object> conf = null;
         switch (actionCode) {
-
             case ActionMap.CONFIG:
                 return this.configManager.getAllConfig().toString();
-
             case ActionMap.UPLOAD_IMAGE:
             case ActionMap.UPLOAD_SCRAWL:
             case ActionMap.UPLOAD_VIDEO:
@@ -62,13 +57,11 @@ public class ActionEnter {
                 conf = this.configManager.getConfig(actionCode);
                 state = new Uploader(request, conf).doExec();
                 break;
-
             case ActionMap.CATCH_IMAGE:
                 conf = configManager.getConfig(actionCode);
                 String[] list = this.request.getParameterValues((String) conf.get("fieldName"));
                 state = new ImageHunter(conf).capture(list);
                 break;
-
             case ActionMap.LIST_IMAGE:
             case ActionMap.LIST_FILE:
                 conf = configManager.getConfig(actionCode);

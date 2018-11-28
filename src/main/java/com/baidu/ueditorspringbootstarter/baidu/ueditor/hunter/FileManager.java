@@ -59,35 +59,14 @@ public class FileManager {
             file = (File) obj;
             String absolutePath = file.getAbsolutePath().replace("\\", "/").replace("//", "/");
             fileState = new BaseState(true);
-            if (this.rootPath.equals("/")) {
-                fileState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + file.getPath().replace("\\", "/"));
+            if (this.rootPath.startsWith("/")) {
+                fileState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + file.getPath().replace("\\", "/").replaceFirst(this.rootPath, ""));
             } else {
-                fileState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + "/" + absolutePath.replace(this.rootPath, ""));
+                fileState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + "/" + absolutePath.replaceFirst(this.rootPath, ""));
             }
             state.addState(fileState);
         }
         return state;
-    }
-
-    private State getState(Object[] files) {
-        MultiState state = new MultiState(true);
-        BaseState fileState = null;
-        File file = null;
-        for (Object obj : files) {
-            if (obj == null) {
-                break;
-            }
-            file = (File) obj;
-            fileState = new BaseState(true);
-            fileState.putInfo("url", PathFormat.format(this.getPath(file)));
-            state.addState(fileState);
-        }
-        return state;
-    }
-
-    private String getPath(File file) {
-        String path = file.getAbsolutePath();
-        return path.replace(this.rootPath, "/");
     }
 
     private String[] getAllowFiles(Object fileExt) {

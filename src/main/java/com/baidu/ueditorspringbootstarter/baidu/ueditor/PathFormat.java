@@ -20,22 +20,14 @@ public class PathFormat {
 	private static Date currentDate = null;
 	
 	public static String parse ( String input ) {
-		
 		Pattern pattern = Pattern.compile( "\\{([^\\}]+)\\}", Pattern.CASE_INSENSITIVE  );
 		Matcher matcher = pattern.matcher(input);
-		
 		PathFormat.currentDate = new Date();
-		
 		StringBuffer sb = new StringBuffer();
-		
 		while ( matcher.find() ) {
-			
 			matcher.appendReplacement(sb, PathFormat.getString( matcher.group( 1 ) ) );
-			
 		}
-		
 		matcher.appendTail(sb);
-		
 		return sb.toString();
 	}
 	
@@ -45,23 +37,16 @@ public class PathFormat {
 	 * @return 格式化后的路径
 	 */
 	public static String format ( String input ) {
-		
 		return input.replace( "\\", "/" );
-		
 	}
 
 	public static String parse ( String input, String filename ) {
-	
 		Pattern pattern = Pattern.compile( "\\{([^\\}]+)\\}", Pattern.CASE_INSENSITIVE  );
 		Matcher matcher = pattern.matcher(input);
 		String matchStr = null;
-		
 		PathFormat.currentDate = new Date();
-		
 		StringBuffer sb = new StringBuffer();
-		
 		while ( matcher.find() ) {
-			
 			matchStr = matcher.group( 1 );
 			if ( matchStr.indexOf( "filename" ) != -1 ) {
 				filename = filename.replace( "$", "\\$" ).replaceAll( "[\\/:*?\"<>|]", "" );
@@ -69,18 +54,13 @@ public class PathFormat {
 			} else {
 				matcher.appendReplacement(sb, PathFormat.getString( matchStr ) );
 			}
-			
 		}
-		
 		matcher.appendTail(sb);
-		
 		return sb.toString();
 	}
 		
 	private static String getString ( String pattern ) {
-		
 		pattern = pattern.toLowerCase();
-		
 		// time 处理
 		if ( pattern.indexOf( PathFormat.TIME ) != -1 ) {
 			return PathFormat.getTimestamp();
@@ -101,9 +81,7 @@ public class PathFormat {
 		} else if ( pattern.indexOf( PathFormat.RAND ) != -1 ) {
 			return PathFormat.getRandom( pattern );
 		}
-		
 		return pattern;
-		
 	}
 
 	private static String getTimestamp () {
@@ -139,19 +117,10 @@ public class PathFormat {
 	}
 	
 	private static String getRandom ( String pattern ) {
-		
 		int length = 0;
 		pattern = pattern.split( ":" )[ 1 ].trim();
-		
 		length = Integer.parseInt( pattern );
-		
 		return ( Math.random() + "" ).replace( ".", "" ).substring( 0, length );
-		
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
