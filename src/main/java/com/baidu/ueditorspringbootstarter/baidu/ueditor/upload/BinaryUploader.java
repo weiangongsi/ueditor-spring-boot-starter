@@ -20,8 +20,7 @@ import java.util.Map;
 
 public class BinaryUploader {
 
-    public static final State save(HttpServletRequest request,
-                                   Map<String, Object> conf) {
+    public static final State save(HttpServletRequest request, Map<String, Object> conf) {
         boolean isAjaxUpload = request.getHeader("X_Requested_With") != null;
         if (!ServletFileUpload.isMultipartContent(request)) {
             return new BaseState(false, AppInfo.NOT_MULTIPART_CONTENT);
@@ -58,7 +57,7 @@ public class BinaryUploader {
             String physicalPath = (UeditorAutoConfigure.properties.getPhysicalPath() + savePath).replace("//", "/");
             State storageState = StorageManager.saveFileByInputStream(file.getInputStream(), physicalPath);
             if (storageState.isSuccess()) {
-                storageState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + PathFormat.format(savePath));
+                storageState.putInfo("url", (UeditorAutoConfigure.properties.getUrlPrefix() + PathFormat.format(savePath)).replace("//", "/"));
                 storageState.putInfo("type", suffix);
                 storageState.putInfo("original", originFileName + suffix);
             }
