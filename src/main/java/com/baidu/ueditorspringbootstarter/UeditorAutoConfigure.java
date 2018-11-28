@@ -31,17 +31,31 @@ public class UeditorAutoConfigure {
         UeditorAutoConfigure.properties = properties;
     }
 
-
     /**
      * 百度编辑器请求
      *
-     * @param request 请求
-     * @return 处理结果
+     * @param request  请求
+     * @param response 返回
      * @author lihy
      */
     @RequestMapping({"${ue.server-url}"})
-    public String server(HttpServletRequest request) {
-        return new ActionEnter(request, properties.getConfigFile()).exec();
+    public void server(HttpServletRequest request, HttpServletResponse response) {
+        ServletOutputStream out = null;
+        try {
+            out = response.getOutputStream();
+            out.print(new ActionEnter(request, properties.getConfigFile()).exec());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 
     /**
