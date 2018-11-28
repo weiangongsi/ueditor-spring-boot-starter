@@ -19,7 +19,7 @@
          ue:
            config-file: static/ueditor/jsp/config.json #resources目录下配置文件的位置
            server-url: /ueditor.do #服务器统一请求接口路径
-           url-prefix: /file
+           url-prefix: /file/ #"/"结尾
            physical-path: C:/upload/ #存储文件的绝对路径 必须使用标准路径"/"作为分隔符
       ```
    * static/ueditor/ueditor.config.js <br>
