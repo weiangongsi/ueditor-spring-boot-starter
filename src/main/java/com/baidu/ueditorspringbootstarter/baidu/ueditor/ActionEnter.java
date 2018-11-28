@@ -55,6 +55,7 @@ public class ActionEnter {
             case ActionMap.UPLOAD_VIDEO:
             case ActionMap.UPLOAD_FILE:
                 conf = this.configManager.getConfig(actionCode);
+                conf.put("contextPath", request.getContextPath());
                 state = new Uploader(request, conf).doExec();
                 break;
             case ActionMap.CATCH_IMAGE:
@@ -65,6 +66,7 @@ public class ActionEnter {
             case ActionMap.LIST_IMAGE:
             case ActionMap.LIST_FILE:
                 conf = configManager.getConfig(actionCode);
+                conf.put("contextPath", request.getContextPath());
                 int start = this.getStartIndex();
                 state = new FileManager(conf).listFile(start);
                 break;

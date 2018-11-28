@@ -54,12 +54,12 @@ public class BinaryUploader {
             String savePath = (String) conf.get("savePath");
             savePath = savePath + suffix;
             savePath = PathFormat.parse(savePath, originFileName);
-            String physicalPath = (UeditorAutoConfigure.properties.getPhysicalPath() + savePath).replace("//", "/");
+            String physicalPath = PathFormat.format(UeditorAutoConfigure.properties.getPhysicalPath() + "/" + savePath);
             State storageState = StorageManager.saveFileByInputStream(file.getInputStream(), physicalPath);
             if (storageState.isSuccess()) {
-                storageState.putInfo("url", (UeditorAutoConfigure.properties.getUrlPrefix() + PathFormat.format(savePath)).replace("//", "/"));
+                storageState.putInfo("url", PathFormat.format(conf.get("contextPath") + "/" + UeditorAutoConfigure.properties.getUrlPrefix() + PathFormat.format(savePath)));
                 storageState.putInfo("type", suffix);
-                storageState.putInfo("original", originFileName + suffix);
+                storageState.putInfo("original", originFileName);
             }
             return storageState;
         } catch (IOException e) {

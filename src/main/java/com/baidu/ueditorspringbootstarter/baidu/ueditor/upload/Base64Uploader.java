@@ -21,10 +21,10 @@ public final class Base64Uploader {
         String suffix = FileType.getSuffix("JPG");
         String savePath = PathFormat.parse((String) conf.get("savePath"), (String) conf.get("filename"));
         savePath = savePath + suffix;
-        String physicalPath = (UeditorAutoConfigure.properties.getPhysicalPath() + savePath).replace("//", "/");
+        String physicalPath = PathFormat.format(UeditorAutoConfigure.properties.getPhysicalPath() + "/" + savePath);
         State storageState = StorageManager.saveBinaryFile(data, physicalPath);
         if (storageState.isSuccess()) {
-            storageState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + PathFormat.format(savePath));
+            storageState.putInfo("url", PathFormat.format(conf.get("contextPath") + "/" + UeditorAutoConfigure.properties.getUrlPrefix() + savePath));
             storageState.putInfo("type", suffix);
             storageState.putInfo("original", "");
         }

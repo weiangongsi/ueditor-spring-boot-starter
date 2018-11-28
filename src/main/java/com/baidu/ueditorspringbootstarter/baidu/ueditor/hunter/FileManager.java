@@ -19,12 +19,15 @@ public class FileManager {
     private String rootPath = null;
     private String[] allowFiles = null;
     private int count = 0;
+    private String contextPath = "";
+
 
     public FileManager(Map<String, Object> conf) {
-        this.rootPath = UeditorAutoConfigure.properties.getPhysicalPath().replace("\\", "/");
-        this.dir = (this.rootPath + (String) conf.get("dir")).replace("\\", "/").replace("//", "/");
+        this.rootPath = PathFormat.format(UeditorAutoConfigure.properties.getPhysicalPath());
+        this.dir = PathFormat.format(this.rootPath + (String) conf.get("dir"));
         this.allowFiles = this.getAllowFiles(conf.get("allowFiles"));
         this.count = (Integer) conf.get("count");
+        this.contextPath = (String) conf.get("contextPath");
     }
 
     public State listFile(int index) {
@@ -57,12 +60,12 @@ public class FileManager {
                 break;
             }
             file = (File) obj;
-            String absolutePath = file.getAbsolutePath().replace("\\", "/").replace("//", "/");
+            String absolutePath = PathFormat.format(file.getAbsolutePath());
             fileState = new BaseState(true);
             if (this.rootPath.startsWith("/")) {
-                fileState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + file.getPath().replace("\\", "/").replaceFirst(this.rootPath, ""));
+                fileState.putInfo("url", PathFormat.format(contextPath + "/" + UeditorAutoConfigure.properties.getUrlPrefix() + "/" + file.getPath()).replaceFirst(this.rootPath, ""));
             } else {
-                fileState.putInfo("url", UeditorAutoConfigure.properties.getUrlPrefix() + "/" + absolutePath.replaceFirst(this.rootPath, ""));
+                fileState.putInfo("url", PathFormat.format(contextPath + "/" + UeditorAutoConfigure.properties.getUrlPrefix() + "/" + absolutePath).replaceFirst(this.rootPath, ""));
             }
             state.addState(fileState);
         }

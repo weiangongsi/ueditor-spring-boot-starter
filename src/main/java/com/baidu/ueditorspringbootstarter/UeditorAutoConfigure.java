@@ -1,6 +1,7 @@
 package com.baidu.ueditorspringbootstarter;
 
 import com.baidu.ueditorspringbootstarter.baidu.ueditor.ActionEnter;
+import com.baidu.ueditorspringbootstarter.baidu.ueditor.PathFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,14 +51,15 @@ public class UeditorAutoConfigure {
      * @param response HttpServletResponse
      * @author lihy
      */
-    @RequestMapping({"${ue.url-prefix}**"})
+    @RequestMapping({"${ue.url-prefix}/**"})
     public void readFile(HttpServletRequest request, HttpServletResponse response) {
         ServletOutputStream out = null;
         InputStream in = null;
         try {
             out = response.getOutputStream();
-            String filename = request.getRequestURI().substring(properties.getUrlPrefix().length(), request.getRequestURI().length());
-            in = new FileInputStream((properties.getPhysicalPath() + filename).replace("//", "/"));
+            String uri = request.getRequestURI();
+            String filename = uri.substring(uri.indexOf(properties.getUrlPrefix()) + properties.getUrlPrefix().length(), request.getRequestURI().length());
+            in = new FileInputStream(PathFormat.format(properties.getPhysicalPath() + "/" + filename));
             int len = 0;
             byte[] buffer = new byte[1024];
             while ((len = in.read(buffer)) > 0) {
