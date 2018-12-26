@@ -1,14 +1,14 @@
-package com.baidu.ueditorspringbootstarter.baidu.ueditor.upload;
+package com.baidu.ueditor.upload;
 
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.AppInfo;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.BaseState;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.State;
+import com.baidu.ueditor.define.AppInfo;
+import com.baidu.ueditor.define.BaseState;
+import com.baidu.ueditor.define.State;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 
 public class StorageManager {
-    public static final int BUFFER_SIZE = 8192;
+    private static final int BUFFER_SIZE = 8192;
 
     public StorageManager() {
     }
@@ -20,8 +20,7 @@ public class StorageManager {
             return state;
         }
         try {
-            BufferedOutputStream bos = new BufferedOutputStream(
-                    new FileOutputStream(file));
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
             bos.write(data);
             bos.flush();
             bos.close();
@@ -58,6 +57,7 @@ public class StorageManager {
             }
             return state;
         } catch (IOException e) {
+            e.printStackTrace();
         }
         return new BaseState(false, AppInfo.IO_ERROR);
     }

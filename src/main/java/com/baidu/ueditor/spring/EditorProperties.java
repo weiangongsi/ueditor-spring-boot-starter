@@ -1,4 +1,4 @@
-package com.baidu.ueditorspringbootstarter;
+package com.baidu.ueditor.spring;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version 2018/6/12
  */
 @ConfigurationProperties("ue")
-public class UdeitorProperties {
+public class EditorProperties {
 
     /**
      * config.json 路径
@@ -63,4 +63,5 @@ public class UdeitorProperties {
     public void setPhysicalPath(String physicalPath) {
         this.physicalPath = physicalPath;
     }
+
 }

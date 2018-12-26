@@ -1,4 +1,4 @@
-package com.baidu.ueditorspringbootstarter.baidu.ueditor;
+package com.baidu.ueditor;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,9 +18,9 @@ public class PathFormat {
     private static final String RAND = "rand";
 
     private static Date currentDate = null;
+    private static Pattern pattern = Pattern.compile("\\{([^\\}]+)\\}", Pattern.CASE_INSENSITIVE);
 
     public static String parse(String input) {
-        Pattern pattern = Pattern.compile("\\{([^\\}]+)\\}", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(input);
         PathFormat.currentDate = new Date();
         StringBuffer sb = new StringBuffer();
@@ -38,18 +38,17 @@ public class PathFormat {
      * @return 格式化后的路径
      */
     public static String format(String input) {
-        return input.replaceAll("/+|\\\\", "/");
+        return input.replaceAll("/+|\\\\+", "/");
     }
 
     public static String parse(String input, String filename) {
-        Pattern pattern = Pattern.compile("\\{([^\\}]+)\\}", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(input);
         String matchStr = null;
         PathFormat.currentDate = new Date();
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
             matchStr = matcher.group(1);
-            if (matchStr.indexOf("filename") != -1) {
+            if (matchStr.contains("filename")) {
                 filename = filename.replace("$", "\\$").replaceAll("[\\/:*?\"<>|]", "");
                 matcher.appendReplacement(sb, filename);
             } else {
@@ -63,23 +62,23 @@ public class PathFormat {
     private static String getString(String pattern) {
         pattern = pattern.toLowerCase();
         // time 处理
-        if (pattern.indexOf(PathFormat.TIME) != -1) {
+        if (pattern.contains(PathFormat.TIME)) {
             return PathFormat.getTimestamp();
-        } else if (pattern.indexOf(PathFormat.FULL_YEAR) != -1) {
+        } else if (pattern.contains(PathFormat.FULL_YEAR)) {
             return PathFormat.getFullYear();
-        } else if (pattern.indexOf(PathFormat.YEAR) != -1) {
+        } else if (pattern.contains(PathFormat.YEAR)) {
             return PathFormat.getYear();
-        } else if (pattern.indexOf(PathFormat.MONTH) != -1) {
+        } else if (pattern.contains(PathFormat.MONTH)) {
             return PathFormat.getMonth();
-        } else if (pattern.indexOf(PathFormat.DAY) != -1) {
+        } else if (pattern.contains(PathFormat.DAY)) {
             return PathFormat.getDay();
-        } else if (pattern.indexOf(PathFormat.HOUR) != -1) {
+        } else if (pattern.contains(PathFormat.HOUR)) {
             return PathFormat.getHour();
-        } else if (pattern.indexOf(PathFormat.MINUTE) != -1) {
+        } else if (pattern.contains(PathFormat.MINUTE)) {
             return PathFormat.getMinute();
-        } else if (pattern.indexOf(PathFormat.SECOND) != -1) {
+        } else if (pattern.contains(PathFormat.SECOND)) {
             return PathFormat.getSecond();
-        } else if (pattern.indexOf(PathFormat.RAND) != -1) {
+        } else if (pattern.contains(PathFormat.RAND)) {
             return PathFormat.getRandom(pattern);
         }
         return pattern;

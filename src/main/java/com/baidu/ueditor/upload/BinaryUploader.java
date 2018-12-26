@@ -1,11 +1,11 @@
-package com.baidu.ueditorspringbootstarter.baidu.ueditor.upload;
+package com.baidu.ueditor.upload;
 
-import com.baidu.ueditorspringbootstarter.UeditorAutoConfigure;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.PathFormat;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.AppInfo;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.BaseState;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.FileType;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.State;
+import com.baidu.ueditor.PathFormat;
+import com.baidu.ueditor.define.AppInfo;
+import com.baidu.ueditor.define.BaseState;
+import com.baidu.ueditor.define.FileType;
+import com.baidu.ueditor.define.State;
+import com.baidu.ueditor.spring.EditorController;
 import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class BinaryUploader {
 
-    public static final State save(HttpServletRequest request, Map<String, Object> conf) {
+   public static State save(HttpServletRequest request, Map<String, Object> conf) {
         boolean isAjaxUpload = request.getHeader("X_Requested_With") != null;
         if (!ServletFileUpload.isMultipartContent(request)) {
             return new BaseState(false, AppInfo.NOT_MULTIPART_CONTENT);
@@ -41,12 +41,13 @@ public class BinaryUploader {
             // 文件名
             String originFileName = file.getOriginalFilename();
             // 文件扩展名
+            assert originFileName != null;
             String suffix = FileType.getSuffixByFilename(originFileName);
             // 不符合文件类型
             if (!validType(suffix, (String[]) conf.get("allowFiles"))) {
                 return new BaseState(false, AppInfo.NOT_ALLOW_FILE_TYPE);
             }
-            long maxSize = ((Long) conf.get("maxSize")).longValue();
+            long maxSize = (Long) conf.get("maxSize");
             // 文件大小超出限制
             if (maxSize < file.getSize()) {
                 return new BaseState(false, AppInfo.MAX_SIZE);
@@ -54,10 +55,10 @@ public class BinaryUploader {
             String savePath = (String) conf.get("savePath");
             savePath = savePath + suffix;
             savePath = PathFormat.parse(savePath, originFileName);
-            String physicalPath = PathFormat.format(UeditorAutoConfigure.properties.getPhysicalPath() + "/" + savePath);
+            String physicalPath = PathFormat.format(EditorController.properties.getPhysicalPath() + "/" + savePath);
             State storageState = StorageManager.saveFileByInputStream(file.getInputStream(), physicalPath);
             if (storageState.isSuccess()) {
-                storageState.putInfo("url", PathFormat.format(conf.get("contextPath") + "/" + UeditorAutoConfigure.properties.getUrlPrefix() + PathFormat.format(savePath)));
+                storageState.putInfo("url", PathFormat.format(conf.get("contextPath") + "/" + EditorController.properties.getUrlPrefix() + "/" + PathFormat.format(savePath)));
                 storageState.putInfo("type", suffix);
                 storageState.putInfo("original", originFileName);
             }
@@ -70,7 +71,6 @@ public class BinaryUploader {
 
     private static boolean validType(String type, String[] allowTypes) {
         List<String> list = Arrays.asList(allowTypes);
-
         return list.contains(type);
     }
 }

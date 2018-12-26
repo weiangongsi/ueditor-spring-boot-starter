@@ -1,6 +1,6 @@
-package com.baidu.ueditorspringbootstarter.baidu.ueditor;
+package com.baidu.ueditor;
 
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.ActionMap;
+import com.baidu.ueditor.define.ActionMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -16,7 +16,7 @@ import java.util.Map;
  *
  * @author hancong03@baidu.com
  */
-public final class ConfigManager {
+final class ConfigManager {
     private String configFile = null;
     private JSONObject jsonConfig = null;
     // 涂鸦上传filename定义
@@ -24,7 +24,7 @@ public final class ConfigManager {
     // 远程图片抓取filename定义
     private final static String REMOTE_FILE_NAME = "remote";
 
-    /*
+    /**
      * 通过一个给定的路径构建一个配置管理器， 该管理器要求地址路径所在目录下必须存在config.properties文件
      */
     private ConfigManager(String configFile) throws IOException {
@@ -38,21 +38,26 @@ public final class ConfigManager {
      * @param configFile 配置文件
      * @return 配置管理器实例或者null
      */
-    public static ConfigManager getInstance(String configFile) {
+    static ConfigManager getInstance(String configFile) {
         try {
             return new ConfigManager(configFile);
         } catch (Exception e) {
             return null;
         }
     }
-    // 验证配置文件加载是否正确
-    public boolean valid() {
+
+    /**
+     * 验证配置文件加载是否正确
+     */
+    boolean valid() {
         return this.jsonConfig != null;
     }
-    public JSONObject getAllConfig() {
+
+    JSONObject getAllConfig() {
         return this.jsonConfig;
     }
-    public Map<String, Object> getConfig(int type) {
+
+    Map<String, Object> getConfig(int type) {
         Map<String, Object> conf = new HashMap<String, Object>();
         String savePath = null;
         switch (type) {
@@ -113,15 +118,16 @@ public final class ConfigManager {
         conf.put("savePath", savePath);
         return conf;
     }
+
     private void initEnv() throws IOException {
         String configContent = this.readFile(this.configFile);
         try {
-            JSONObject jsonConfig = new JSONObject(configContent);
-            this.jsonConfig = jsonConfig;
+            this.jsonConfig = new JSONObject(configContent);
         } catch (Exception e) {
             this.jsonConfig = null;
         }
     }
+
     private String[] getArray(String key) {
         JSONArray jsonArray = this.jsonConfig.getJSONArray(key);
         String[] result = new String[jsonArray.length()];
@@ -130,6 +136,12 @@ public final class ConfigManager {
         }
         return result;
     }
+
+    /**
+     * 读取配置文件
+     *
+     * @param path resources目录下配置文件的位置 如（static/ueditor/jsp/config.json）
+     */
     private String readFile(String path) throws IOException {
         StringBuilder builder = new StringBuilder();
         try {
@@ -148,9 +160,11 @@ public final class ConfigManager {
         }
         return this.filter(builder.toString());
     }
-    // 过滤输入字符串, 剔除多行注释以及替换掉反斜杠
-    private String filter(String input) {
 
+    /**
+     * 过滤输入字符串, 剔除多行注释以及替换掉反斜杠
+     */
+    private String filter(String input) {
         return input.replaceAll("/\\*[\\s\\S]*?\\*/", "");
 
     }

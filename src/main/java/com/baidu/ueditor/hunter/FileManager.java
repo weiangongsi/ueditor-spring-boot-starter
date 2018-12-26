@@ -1,11 +1,11 @@
-package com.baidu.ueditorspringbootstarter.baidu.ueditor.hunter;
+package com.baidu.ueditor.hunter;
 
-import com.baidu.ueditorspringbootstarter.UeditorAutoConfigure;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.PathFormat;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.AppInfo;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.BaseState;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.MultiState;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.State;
+import com.baidu.ueditor.PathFormat;
+import com.baidu.ueditor.define.AppInfo;
+import com.baidu.ueditor.define.BaseState;
+import com.baidu.ueditor.define.MultiState;
+import com.baidu.ueditor.define.State;
+import com.baidu.ueditor.spring.EditorController;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -15,24 +15,29 @@ import java.util.Map;
 
 public class FileManager {
 
-    private String dir = null;
-    private String rootPath = null;
-    private String[] allowFiles = null;
-    private int count = 0;
-    private String contextPath = "";
-
+    /**
+     * config.json 中的 imageManagerListPath 或 fileManagerListPath 指定要列出图片/文件的目录
+     */
+    private String dir;
+    /**
+     * 存储文件的绝对路径
+     */
+    private String rootPath;
+    private String[] allowFiles;
+    private int count;
+    private String contextPath;
 
     public FileManager(Map<String, Object> conf) {
-        this.rootPath = PathFormat.format(UeditorAutoConfigure.properties.getPhysicalPath());
-        this.dir = PathFormat.format(this.rootPath + (String) conf.get("dir"));
+        this.rootPath = PathFormat.format(EditorController.properties.getPhysicalPath());
+        this.dir = (String) conf.get("dir");
         this.allowFiles = this.getAllowFiles(conf.get("allowFiles"));
         this.count = (Integer) conf.get("count");
         this.contextPath = (String) conf.get("contextPath");
     }
 
     public State listFile(int index) {
-        File dir = new File(this.dir);
-        State state = null;
+        File dir = new File(PathFormat.format(this.rootPath + this.dir));
+        State state;
         if (!dir.exists()) {
             return new BaseState(false, AppInfo.NOT_EXIST);
         }
@@ -53,27 +58,23 @@ public class FileManager {
 
     private State getMyState(Object[] files) {
         MultiState state = new MultiState(true);
-        BaseState fileState = null;
-        File file = null;
+        BaseState fileState;
+        File file;
         for (Object obj : files) {
             if (obj == null) {
                 break;
             }
             file = (File) obj;
             fileState = new BaseState(true);
-            if (this.rootPath.startsWith("/")) {
-                fileState.putInfo("url", PathFormat.format(contextPath + "/" + UeditorAutoConfigure.properties.getUrlPrefix() + "/" + PathFormat.format(file.getPath()).replaceFirst(this.rootPath, "")));
-            } else {
-                fileState.putInfo("url", PathFormat.format(contextPath + "/" + UeditorAutoConfigure.properties.getUrlPrefix() + "/" + PathFormat.format(file.getAbsolutePath()).replaceFirst(this.rootPath, "")));
-            }
+            fileState.putInfo("url", PathFormat.format(contextPath + "/" + EditorController.properties.getUrlPrefix() + "/" + PathFormat.format(file.getPath()).replaceFirst(this.rootPath, "")));
             state.addState(fileState);
         }
         return state;
     }
 
     private String[] getAllowFiles(Object fileExt) {
-        String[] exts = null;
-        String ext = null;
+        String[] exts;
+        String ext;
         if (fileExt == null) {
             return new String[0];
         }

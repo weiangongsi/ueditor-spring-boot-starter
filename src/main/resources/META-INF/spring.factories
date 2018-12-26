@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-    com.baidu.ueditorspringbootstarter.UeditorAutoConfigure
+    com.baidu.ueditor.spring.EditorController

@@ -1,9 +1,9 @@
-package com.baidu.ueditorspringbootstarter.baidu.ueditor.hunter;
+package com.baidu.ueditor.hunter;
 
 
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.PathFormat;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.*;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.upload.StorageManager;
+import com.baidu.ueditor.PathFormat;
+import com.baidu.ueditor.define.*;
+import com.baidu.ueditor.upload.StorageManager;
 
 import java.net.HttpURLConnection;
 import java.net.InetAddress;

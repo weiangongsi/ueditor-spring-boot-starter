@@ -1,10 +1,9 @@
-package com.baidu.ueditorspringbootstarter.baidu.ueditor.define;
+package com.baidu.ueditor.define;
 
 
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.Encoder;
+import com.baidu.ueditor.Encoder;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class BaseState implements State {
@@ -54,15 +53,15 @@ public class BaseState implements State {
         return this.toString();
     }
 
+    @Override
     public String toString() {
         String key = null;
         String stateVal = this.isSuccess() ? AppInfo.getStateInfo(AppInfo.SUCCESS) : this.info;
         StringBuilder builder = new StringBuilder();
-        builder.append("{\"state\": \"" + stateVal + "\"");
-        Iterator<String> iterator = this.infoMap.keySet().iterator();
-        while (iterator.hasNext()) {
-            key = iterator.next();
-            builder.append(",\"" + key + "\": \"" + this.infoMap.get(key) + "\"");
+        builder.append("{\"state\": \"").append(stateVal).append("\"");
+        for (String s : this.infoMap.keySet()) {
+            key = s;
+            builder.append(",\"").append(key).append("\": \"").append(this.infoMap.get(key)).append("\"");
         }
         builder.append("}");
         return Encoder.toUnicode(builder.toString());

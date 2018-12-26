@@ -1,12 +1,12 @@
-package com.baidu.ueditorspringbootstarter.baidu.ueditor;
+package com.baidu.ueditor;
 
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.ActionMap;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.AppInfo;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.BaseState;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.define.State;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.hunter.FileManager;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.hunter.ImageHunter;
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.upload.Uploader;
+import com.baidu.ueditor.define.ActionMap;
+import com.baidu.ueditor.define.AppInfo;
+import com.baidu.ueditor.define.BaseState;
+import com.baidu.ueditor.define.State;
+import com.baidu.ueditor.hunter.ImageHunter;
+import com.baidu.ueditor.spring.EditorController;
+import com.baidu.ueditor.spring.EditorUploader;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -37,8 +37,8 @@ public class ActionEnter {
         }
     }
 
-    public String invoke() {
-        if (actionType == null || !ActionMap.mapping.containsKey(actionType)) {
+    private String invoke() {
+        if (actionType == null || !ActionMap.MAPPING.containsKey(actionType)) {
             return new BaseState(false, AppInfo.INVALID_ACTION).toJSONString();
         }
         if (this.configManager == null || !this.configManager.valid()) {
@@ -47,6 +47,7 @@ public class ActionEnter {
         State state = null;
         int actionCode = ActionMap.getType(this.actionType);
         Map<String, Object> conf = null;
+        EditorUploader upload = EditorController.editorUploader;
         switch (actionCode) {
             case ActionMap.CONFIG:
                 return this.configManager.getAllConfig().toString();
@@ -56,7 +57,11 @@ public class ActionEnter {
             case ActionMap.UPLOAD_FILE:
                 conf = this.configManager.getConfig(actionCode);
                 conf.put("contextPath", request.getContextPath());
-                state = new Uploader(request, conf).doExec();
+                if ("true".equals(conf.get("isBase64"))) {
+                    state = upload.base64Upload(request, conf);
+                } else {
+                    state = upload.binaryUpload(request, conf);
+                }
                 break;
             case ActionMap.CATCH_IMAGE:
                 conf = configManager.getConfig(actionCode);
@@ -64,17 +69,21 @@ public class ActionEnter {
                 state = new ImageHunter(conf).capture(list);
                 break;
             case ActionMap.LIST_IMAGE:
+                conf = configManager.getConfig(actionCode);
+                conf.put("contextPath", request.getContextPath());
+                state = upload.listImage(this.getStartIndex(), conf);
+                break;
             case ActionMap.LIST_FILE:
                 conf = configManager.getConfig(actionCode);
                 conf.put("contextPath", request.getContextPath());
-                int start = this.getStartIndex();
-                state = new FileManager(conf).listFile(start);
+                state = upload.listFile(this.getStartIndex(), conf);
                 break;
         }
+        assert state != null;
         return state.toJSONString();
     }
 
-    public int getStartIndex() {
+    private int getStartIndex() {
         String start = this.request.getParameter("start");
         try {
             return Integer.parseInt(start);
@@ -84,11 +93,8 @@ public class ActionEnter {
     }
 
 
-    public boolean validCallbackName(String name) {
-        if (name.matches("^[a-zA-Z_]+[\\w0-9_]*$")) {
-            return true;
-        }
-        return false;
+    private boolean validCallbackName(String name) {
+        return name.matches("^[a-zA-Z_]+[\\w0-9_]*$");
     }
 
 }

@@ -1,7 +1,7 @@
-package com.baidu.ueditorspringbootstarter.baidu.ueditor.define;
+package com.baidu.ueditor.define;
 
 
-import com.baidu.ueditorspringbootstarter.baidu.ueditor.Encoder;
+import com.baidu.ueditor.Encoder;
 
 import java.util.*;
 
@@ -54,23 +54,23 @@ public class MultiState implements State {
     public String toJSONString() {
         String stateVal = this.isSuccess() ? AppInfo.getStateInfo(AppInfo.SUCCESS) : this.info;
         StringBuilder builder = new StringBuilder();
-        builder.append("{\"state\": \"" + stateVal + "\"");
+        builder.append("{\"state\": \"").append(stateVal).append("\"");
         // 数字转换
         Iterator<String> iterator = this.intMap.keySet().iterator();
         while (iterator.hasNext()) {
             stateVal = iterator.next();
-            builder.append(",\"" + stateVal + "\": " + this.intMap.get(stateVal));
+            builder.append(",\"").append(stateVal).append("\": ").append(this.intMap.get(stateVal));
         }
         iterator = this.infoMap.keySet().iterator();
         while (iterator.hasNext()) {
             stateVal = iterator.next();
-            builder.append(",\"" + stateVal + "\": \"" + this.infoMap.get(stateVal) + "\"");
+            builder.append(",\"").append(stateVal).append("\": \"").append(this.infoMap.get(stateVal)).append("\"");
         }
         // 添加双引号，解决前端不能解析的问题
         builder.append(", \"list\": [");
         iterator = this.stateList.iterator();
         while (iterator.hasNext()) {
-            builder.append(iterator.next() + ",");
+            builder.append(iterator.next()).append(",");
         }
         if (this.stateList.size() > 0) {
             builder.deleteCharAt(builder.length() - 1);

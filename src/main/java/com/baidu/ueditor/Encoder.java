@@ -1,4 +1,4 @@
-package com.baidu.ueditorspringbootstarter.baidu.ueditor;
+package com.baidu.ueditor;
 
 public class Encoder {
 
@@ -9,7 +9,7 @@ public class Encoder {
 			if ( ch < 256 ) {
 				builder.append( ch );
 			} else {
-				builder.append( "\\u" +  Integer.toHexString( ch& 0xffff ) );
+				builder.append("\\u").append(Integer.toHexString(ch & 0xffff));
 			}
 		}
 		return builder.toString();
