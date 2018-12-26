@@ -69,7 +69,7 @@
       ```
       如有问题可以加群：806893930 ，我第一次建群，里面就几个人，欢迎你的加入
 4. #### 自定义上传
-    * 1.当前服务自定义处理
+    * 1.当前服务自定义处理<br>
         实现com.baidu.ueditor.spring.EditorUploader接口，创建实现类的bean注入到spring容器中<br>
         下面的案例中有实现的例子，实现类是 com.example.ueditorspringbootstarterexample.MyEditorUploader
     * 2.只传到远程服务器<br>
