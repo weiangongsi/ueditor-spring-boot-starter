@@ -23,12 +23,14 @@ public class EditorProperties {
 
     /**
      * 资源访问前缀
+     * 自定义上传时字段无意义
      */
     private String urlPrefix;
 
     /**
      * 存储文件的绝对路径 必须使用标准路径"/"作为分隔符
      * 默认为"/"即当前项目所在磁盘根目录
+     * 自定义上传时字段无意义
      */
     private String physicalPath = "/";
 

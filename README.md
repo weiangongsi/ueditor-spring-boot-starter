@@ -7,7 +7,7 @@
            <dependency>
                     <groupId>com.dcssn</groupId>
                     <artifactId>ueditor-spring-boot-starter</artifactId>
-                    <version>0.1.1</version>
+                    <version>1.0.0</version>
            </dependency>
       ```
    * 下载百度编辑器源码 链接：[最新版本1.4.3.3 Jsp UTF-8版本](https://ueditor.baidu.com/build/build_down.php?n=ueditor&v=1_4_3_3-utf8-jsp)<br>
@@ -23,9 +23,9 @@
            physical-path: C:/upload/ #存储文件的绝对路径 必须使用标准路径"/"作为分隔符 默认为"/"即当前项目所在磁盘根目录
       ```
    * static/ueditor/ueditor.config.js <br>
-      将serverUrl 改为application.yml 中ue.server-url 的值
+      将serverUrl 改为application.yml 中server.servlet.context-path(如果你设置了此值则加上) + ue.server-url 的值
    * config.json <br>
-      图片访问路径前缀（imageUrlPrefix）、视频访问路径前缀、文件访问路径前缀不要赋值，会影响回显，其余参数可以按照百度文档修改
+        <font color=#FF4040>图片访问路径前缀（imageUrlPrefix）、视频访问路径前缀、文件访问路径前缀不要赋值，会影响回显，其余参数可以按照百度文档修改</font>
    * 上传文件大小 <br>
       spring上传文件默认最大1MB，上传文件大小会先被spring限制，config.json文件大小限制要小于spring的设置，我们可以将spring的限制设大点
       ```
