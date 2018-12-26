@@ -25,7 +25,7 @@
    * static/ueditor/ueditor.config.js <br>
       将serverUrl 改为application.yml 中server.servlet.context-path(如果你设置了此值则加上) + ue.server-url 的值
    * config.json <br>
-        <font color=#FF4040>图片访问路径前缀（imageUrlPrefix）、视频访问路径前缀、文件访问路径前缀不要赋值，会影响回显，其余参数可以按照百度文档修改</font>
+      注意：图片访问路径前缀（imageUrlPrefix）、视频访问路径前缀、文件访问路径前缀不要赋值，会影响回显，其余参数可以按照百度文档修改
    * 上传文件大小 <br>
       spring上传文件默认最大1MB，上传文件大小会先被spring限制，config.json文件大小限制要小于spring的设置，我们可以将spring的限制设大点
       ```
@@ -68,7 +68,28 @@
          </html>
       ```
       如有问题可以加群：806893930 ，我第一次建群，里面就几个人，欢迎你的加入
-4. #### 参考百度文档
+4. #### 自定义上传
+    * 1.当前服务自定义处理
+        实现com.baidu.ueditor.spring.EditorUploader接口，创建实现类的bean注入到spring容器中<br>
+        下面的案例中有实现的例子，实现类是 com.example.ueditorspringbootstarterexample.MyEditorUploader
+    * 2.只传到远程服务器<br>
+        [http://fex.baidu.com/ueditor/#qa-customurl](http://fex.baidu.com/ueditor/#qa-customurl)
+        ```            
+            <script>
+                UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+                UE.Editor.prototype.getActionUrl = function(action) {
+                    if (action == 'uploadimage' || action == 'uploadscrawl' || action == 'uploadimage') {
+                        return 'http://a.b.com/upload.php';
+                    } else if (action == 'uploadvideo') {
+                        return 'http://a.b.com/video.php';
+                    } else {
+                        return this._bkGetActionUrl.call(this, action);
+                    }
+                }
+                UE.getEditor('editor');
+            </script>
+         ```
+5. #### 参考百度文档
     代码只修改了上传和获取文件列表的方法，添加了服务器统一请求接口路径的拦截器，没有别的改动，[百度文档](http://fex.baidu.com/ueditor/)
-5. #### 项目案例
+6. #### 项目案例
    [https://github.com/weiangongsi/ueditor-spring-boot-starter-example](https://github.com/weiangongsi/ueditor-spring-boot-starter-example)
