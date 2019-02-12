@@ -10,7 +10,7 @@
                     <version>1.0.0</version>
            </dependency>
       ```
-   * 下载百度编辑器源码 链接：[最新版本1.4.3.3 Jsp UTF-8版本](https://ueditor.baidu.com/build/build_down.php?n=ueditor&v=1_4_3_3-utf8-jsp)<br>
+   * 下载百度编辑器源码 链接：[最新版本1.4.3.3 Jsp UTF-8版本](https://ueditor.baidu.com/website/download.html)<br>
    * 创建ueditor目录 resources > static > ueditor ，将源码拷贝到目录中
    * jsp目录只保留 config.json 文件即可
 2. #### 项目配置<br>
