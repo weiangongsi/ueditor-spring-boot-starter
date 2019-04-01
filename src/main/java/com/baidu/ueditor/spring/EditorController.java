@@ -1,7 +1,6 @@
 package com.baidu.ueditor.spring;
 
 import com.baidu.ueditor.ActionEnter;
-import com.baidu.ueditor.PathFormat;
 import com.baidu.ueditor.define.State;
 import com.baidu.ueditor.hunter.FileManager;
 import com.baidu.ueditor.upload.Base64Uploader;
@@ -10,17 +9,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.CacheControl;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 百度编辑器请求
@@ -69,51 +71,22 @@ public class EditorController {
 
     }
 
-    @RestController
+    @Service
     @ConditionalOnMissingBean(EditorUploader.class)
-    class FileController {
+    class DefaultEditorConfig implements WebMvcConfigurer {
+
         /**
-         * 获取文件请求
-         *
-         * @param request  HttpServletRequest
-         * @param response HttpServletResponse
-         * @author lihy
+         * resource配置
+         * @param registry registry
          */
-        @RequestMapping({"${ue.url-prefix}/**"})
-        public void readFile(HttpServletRequest request, HttpServletResponse response) {
-            ServletOutputStream out = null;
-            InputStream in = null;
-            try {
-                out = response.getOutputStream();
-                String uri = request.getRequestURI();
-                String filename = uri.substring(uri.indexOf(properties.getUrlPrefix()) + properties.getUrlPrefix().length(), request.getRequestURI().length());
-                in = new FileInputStream(PathFormat.format(properties.getPhysicalPath() + "/" + filename));
-                int len = 0;
-                byte[] buffer = new byte[1024];
-                while ((len = in.read(buffer)) > 0) {
-                    out.write(buffer, 0, len);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (out != null) {
-                    try {
-                        out.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+        @Override
+        public void addResourceHandlers(ResourceHandlerRegistry registry) {
+            registry.addResourceHandler(properties.getUrlPrefix() + "**")
+                    .addResourceLocations("file:" + properties.getPhysicalPath())
+                    .setCacheControl(CacheControl.maxAge(2, TimeUnit.DAYS));
         }
 
-        @Service
+        @Component
         class DefaultEditorUploader implements EditorUploader {
 
             @Override
