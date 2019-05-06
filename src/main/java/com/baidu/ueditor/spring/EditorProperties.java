@@ -1,5 +1,6 @@
 package com.baidu.ueditor.spring;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -8,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author lihy
  * @version 2018/6/12
  */
+@Data
 @ConfigurationProperties("ue")
 public class EditorProperties {
 
@@ -21,49 +23,36 @@ public class EditorProperties {
      */
     private String serverUrl;
 
-    /**
-     * 资源访问前缀
-     * 自定义上传时字段无意义
-     */
-    private String urlPrefix;
+    private Qiniu qiniu;
+
+    private Local local;
 
     /**
-     * 存储文件的绝对路径 必须使用标准路径"/"作为分隔符
-     * 默认为"/"即当前项目所在磁盘根目录
-     * 自定义上传时字段无意义
+     * 上传到本地参数
      */
-    private String physicalPath = "/";
-
-    public String getConfigFile() {
-        return configFile;
+    @Data
+    public static class Local {
+        /**
+         * 资源访问前缀
+         */
+        private String urlPrefix;
+        /**
+         * 存储文件的绝对路径 必须使用标准路径"/"作为分隔符
+         * 默认为"/"即当前项目所在磁盘根目录
+         */
+        private String physicalPath = "/";
     }
 
-    public void setConfigFile(String configFile) {
-        this.configFile = configFile;
-    }
-
-    public String getServerUrl() {
-        return serverUrl;
-    }
-
-    public void setServerUrl(String serverUrl) {
-        this.serverUrl = serverUrl;
-    }
-
-    public String getUrlPrefix() {
-        return urlPrefix;
-    }
-
-    public void setUrlPrefix(String urlPrefix) {
-        this.urlPrefix = urlPrefix;
-    }
-
-    public String getPhysicalPath() {
-        return physicalPath;
-    }
-
-    public void setPhysicalPath(String physicalPath) {
-        this.physicalPath = physicalPath;
+    /**
+     * 七牛上传参数
+     */
+    @Data
+    public static class Qiniu {
+        private String accessKey;
+        private String secretKey;
+        private String cdn;
+        private String bucket;
+        private String zone;
     }
 
 }

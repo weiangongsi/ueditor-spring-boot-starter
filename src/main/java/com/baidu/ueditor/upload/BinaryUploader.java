@@ -55,10 +55,10 @@ public class BinaryUploader {
             String savePath = (String) conf.get("savePath");
             savePath = savePath + suffix;
             savePath = PathFormat.parse(savePath, originFileName);
-            String physicalPath = PathFormat.format(EditorController.properties.getPhysicalPath() + "/" + savePath);
+            String physicalPath = PathFormat.format(EditorController.properties.getLocal().getPhysicalPath() + "/" + savePath);
             State storageState = StorageManager.saveFileByInputStream(file.getInputStream(), physicalPath);
             if (storageState.isSuccess()) {
-                storageState.putInfo("url", PathFormat.format(conf.get("contextPath") + "/" + EditorController.properties.getUrlPrefix() + "/" + PathFormat.format(savePath)));
+                storageState.putInfo("url", PathFormat.format(conf.get("contextPath") + "/" + EditorController.properties.getLocal().getUrlPrefix() + "/" + PathFormat.format(savePath)));
                 storageState.putInfo("type", suffix);
                 storageState.putInfo("original", originFileName);
             }

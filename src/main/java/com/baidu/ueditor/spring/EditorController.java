@@ -81,8 +81,8 @@ public class EditorController {
          */
         @Override
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
-            registry.addResourceHandler(properties.getUrlPrefix() + "**")
-                    .addResourceLocations("file:" + properties.getPhysicalPath())
+            registry.addResourceHandler(properties.getLocal().getUrlPrefix() + "**")
+                    .addResourceLocations("file:" + properties.getLocal().getPhysicalPath())
                     .setCacheControl(CacheControl.maxAge(2, TimeUnit.DAYS));
         }
 

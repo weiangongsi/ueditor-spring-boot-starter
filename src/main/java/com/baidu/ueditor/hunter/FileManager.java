@@ -28,7 +28,7 @@ public class FileManager {
     private String contextPath;
 
     public FileManager(Map<String, Object> conf) {
-        this.rootPath = PathFormat.format(EditorController.properties.getPhysicalPath());
+        this.rootPath = PathFormat.format(EditorController.properties.getLocal().getPhysicalPath());
         this.dir = (String) conf.get("dir");
         this.allowFiles = this.getAllowFiles(conf.get("allowFiles"));
         this.count = (Integer) conf.get("count");
@@ -66,7 +66,7 @@ public class FileManager {
             }
             file = (File) obj;
             fileState = new BaseState(true);
-            fileState.putInfo("url", PathFormat.format(contextPath + "/" + EditorController.properties.getUrlPrefix() + "/" + PathFormat.format(file.getPath()).replaceFirst(this.rootPath, "")));
+            fileState.putInfo("url", PathFormat.format(contextPath + "/" + EditorController.properties.getLocal().getUrlPrefix() + "/" + PathFormat.format(file.getPath()).replaceFirst(this.rootPath, "")));
             state.addState(fileState);
         }
         return state;
