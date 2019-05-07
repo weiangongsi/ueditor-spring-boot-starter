@@ -50,7 +50,6 @@ public class QiniuUploader implements EditorUploader {
         String savePath = (String) conf.get("savePath");
         savePath = savePath + suffix;
         savePath = PathFormat.parse(savePath, originFileName);
-        // TODO: 实现你自己的上传 比如ftp上传到服务器、上传到七牛云等
         String url = QiniuUtils.upload(file, savePath);
         BaseState baseState = new BaseState();
         // 必填项url，图片地址
@@ -71,7 +70,6 @@ public class QiniuUploader implements EditorUploader {
         // 根据config.json 中的 imagePathFormat 生成 路径+文件名
         String savePath = PathFormat.parse((String) conf.get("savePath"), (String) conf.get("filename"));
         savePath = savePath + ".jpg";
-        // TODO: 实现你自己的上传 比如ftp上传到服务器、上传到七牛云等
         String url = QiniuUtils.upload(content, savePath);
         BaseState baseState = new BaseState();
         // 必填项url，图片地址
