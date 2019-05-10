@@ -45,4 +45,12 @@ public interface EditorUploader {
      * @return 文件列表
      */
     State listFile(int index, Map<String, Object> conf);
+
+    /**
+     * 抓取远程图片
+     *
+     * @param list 图片列表
+     * @return 文件列表
+     */
+    State imageHunter(String[] list, Map<String, Object> conf);
 }

@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,6 +63,42 @@ public class QiniuUtils {
             }
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    /**
+     * 文件上传
+     *
+     * @param inputStream 上传的文件流
+     * @param fileName    自定义文件名
+     * @return java.lang.String
+     * @author lihy
+     */
+    public static String upload(InputStream inputStream, String fileName) {
+        String zoneStr = EditorController.properties.getQiniu().getZone();
+        Zone zone = getByName(zoneStr);
+        Configuration cfg = new Configuration(zone);
+        UploadManager uploadManager = new UploadManager(cfg);
+        String accessKey = EditorController.properties.getQiniu().getAccessKey();
+        String secretKey = EditorController.properties.getQiniu().getSecretKey();
+        String bucket = EditorController.properties.getQiniu().getBucket();
+        try {
+            Auth auth = Auth.create(accessKey, secretKey);
+            String upToken = auth.uploadToken(bucket);
+            try {
+                Response response = uploadManager.put(inputStream, fileName, upToken, null, null);
+                //解析上传成功的结果
+                DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+                return EditorController.properties.getQiniu().getCdn() + putRet.key;
+            } catch (QiniuException ex) {
+                return null;
+            }
+        }finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

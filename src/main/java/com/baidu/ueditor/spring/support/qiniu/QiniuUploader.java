@@ -1,10 +1,8 @@
 package com.baidu.ueditor.spring.support.qiniu;
 
 import com.baidu.ueditor.PathFormat;
-import com.baidu.ueditor.define.AppInfo;
-import com.baidu.ueditor.define.BaseState;
-import com.baidu.ueditor.define.MultiState;
-import com.baidu.ueditor.define.State;
+import com.baidu.ueditor.define.*;
+import com.baidu.ueditor.spring.EditorController;
 import com.baidu.ueditor.spring.EditorUploader;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Component;
@@ -13,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -107,4 +106,78 @@ public class QiniuUploader implements EditorUploader {
         state.putInfo("total", total.getTotal());
         return state;
     }
+
+    @Override
+    public State imageHunter(String[] list, Map<String, Object> conf) {
+        List<String> allowTypes = Arrays.asList((String[]) conf.get("allowFiles"));
+        Long maxSize = (Long) conf.get("maxSize");
+        String filename = (String) conf.get("filename");
+        String savePath = (String) conf.get("savePath");
+        List<String> filters = Arrays.asList((String[]) conf.get("filter"));
+        MultiState state = new MultiState(true);
+        for (String source : list) {
+            state.addState(saveRemoteImage(source, allowTypes, filters, maxSize, filename, savePath));
+        }
+        return state;
+    }
+
+    private State saveRemoteImage(String urlStr, List<String> allowTypes, List<String> filters, Long maxSize, String filename, String savePath) {
+        HttpURLConnection connection = null;
+        URL url = null;
+        String suffix = null;
+        try {
+            url = new URL(urlStr);
+            if (!validHost(url.getHost(), filters)) {
+                return new BaseState(false, AppInfo.PREVENT_HOST);
+            }
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setInstanceFollowRedirects(true);
+            connection.setUseCaches(true);
+            if (!validContentState(connection.getResponseCode())) {
+                return new BaseState(false, AppInfo.CONNECTION_ERROR);
+            }
+            suffix = MIMEType.getSuffix(connection.getContentType());
+            if (!allowTypes.contains(suffix)) {
+                return new BaseState(false, AppInfo.NOT_ALLOW_FILE_TYPE);
+            }
+            if (!(connection.getContentLength() < maxSize)) {
+                return new BaseState(false, AppInfo.MAX_SIZE);
+            }
+            savePath = savePath + suffix;
+            savePath = PathFormat.parse(savePath, filename);
+            String qiniuUrl = QiniuUtils.upload(connection.getInputStream(), savePath);
+            BaseState baseState = new BaseState();
+            baseState.putInfo("url", qiniuUrl);
+            baseState.putInfo("source", urlStr);
+            return baseState;
+        } catch (Exception e) {
+            return new BaseState(false, AppInfo.REMOTE_FAIL);
+        }
+    }
+
+    private boolean validHost(String hostname, List<String> filters) {
+        try {
+            InetAddress ip = InetAddress.getByName(hostname);
+            if (ip.isSiteLocalAddress()) {
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            return false;
+        }
+        try {
+            String cdn = EditorController.properties.getQiniu().getCdn();
+            URL url = new URL(cdn);
+            if (url.getHost().equals(hostname)) {
+                return false;
+            }
+        } catch (MalformedURLException ignore) {
+        }
+        return !filters.contains(hostname);
+
+    }
+
+    private boolean validContentState(int code) {
+        return HttpURLConnection.HTTP_OK == code;
+    }
+
 }

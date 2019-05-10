@@ -3,6 +3,7 @@ package com.baidu.ueditor.spring;
 import com.baidu.ueditor.ActionEnter;
 import com.baidu.ueditor.define.State;
 import com.baidu.ueditor.hunter.FileManager;
+import com.baidu.ueditor.hunter.ImageHunter;
 import com.baidu.ueditor.upload.Base64Uploader;
 import com.baidu.ueditor.upload.BinaryUploader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,7 @@ public class EditorController {
 
         /**
          * resource配置
+         *
          * @param registry registry
          */
         @Override
@@ -110,6 +112,10 @@ public class EditorController {
                 return new FileManager(conf).listFile(index);
             }
 
+            @Override
+            public State imageHunter(String[] list, Map<String, Object> conf) {
+                return new ImageHunter(conf).capture(list);
+            }
         }
     }
 

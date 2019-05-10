@@ -4,7 +4,6 @@ import com.baidu.ueditor.define.ActionMap;
 import com.baidu.ueditor.define.AppInfo;
 import com.baidu.ueditor.define.BaseState;
 import com.baidu.ueditor.define.State;
-import com.baidu.ueditor.hunter.ImageHunter;
 import com.baidu.ueditor.spring.EditorController;
 import com.baidu.ueditor.spring.EditorUploader;
 
@@ -65,8 +64,9 @@ public class ActionEnter {
                 break;
             case ActionMap.CATCH_IMAGE:
                 conf = configManager.getConfig(actionCode);
+                conf.put("contextPath", request.getContextPath());
                 String[] list = this.request.getParameterValues((String) conf.get("fieldName"));
-                state = new ImageHunter(conf).capture(list);
+                state = upload.imageHunter(list, conf);
                 break;
             case ActionMap.LIST_IMAGE:
                 conf = configManager.getConfig(actionCode);
